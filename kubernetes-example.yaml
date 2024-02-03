@@ -1,0 +1,66 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: hello-word
+    kompose.version: 1.26.1 (a9d05d509)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: hello-word
+  name: hello-word
+spec:
+  type: NodePort
+  ports:
+    - port: 8000
+      targetPort: 80
+      nodePort: 31200
+  selector:
+    io.kompose.service: hello-word
+status:
+  loadBalancer: {}
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f docker-compose.yml
+    kompose.version: 1.26.1 (a9d05d509)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: hello-word
+  name: hello-word
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: hello-word
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert -f docker-compose.yml
+        kompose.version: 1.26.1 (a9d05d509)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: hello-word
+    spec:
+      containers:
+        - args:
+            - uvicorn
+            - app.main:app
+            - --host
+            - 0.0.0.0
+            - --port
+            - "80"
+            - --reload
+          image: poswark/helloword:1.0
+          name: hello-word
+          ports:
+            - containerPort: 80
+          resources: {}
+status: {}
+
+---
+
