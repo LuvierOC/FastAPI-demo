@@ -6,7 +6,7 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building..'
-                sh "docker  build  --no-cache -t ${image}:${tag} monitoring/grafana/. "
+                sh "docker  build  --no-cache -t ${image}:${tag} . "
 
             }
         }
